@@ -9,10 +9,10 @@ homepage = "https://github.com/dfriedenberger/mmut-rdf-model"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-rdflib = "^6.0"
+rdflib = ">=6.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.0"
+pytest = ">=7.0"
 
 [build-system]
 requires = ["poetry-core"]
