@@ -6,7 +6,11 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 mmut:BinaryMicroModel a owl:Class ;
-    rdfs:label "An Binary micro model."@en ;
+    rdfs:label "A Binary micro model."@en ;
+    rdfs:subClassOf mmut:MicroModel .
+
+mmut:EcoreMicroModel a owl:Class ;
+    rdfs:label "An Ecore micro model."@en ;
     rdfs:subClassOf mmut:MicroModel .
 
 mmut:PythonScriptTransformation a owl:Class ;
@@ -18,7 +22,7 @@ mmut:RDFMicroModel a owl:Class ;
     rdfs:subClassOf mmut:MicroModel .
 
 mmut:SysMLMicroModel a owl:Class ;
-    rdfs:label "An SysML micro model."@en ;
+    rdfs:label "A SysML micro model."@en ;
     rdfs:subClassOf mmut:MicroModel .
 
 mmut:extendsModel a owl:ObjectProperty ;
@@ -87,7 +91,7 @@ mmut:value a owl:DatatypeProperty ;
     dcterms:description "A rdf Ontology for model Micro Models and Transformation."@en ;
     dcterms:identifier "http://frittenburger.de/ontology/mmut#" ;
     dcterms:title "Micro Model and Transformation Ontology" ;
-    owl:versionInfo "0.0.1" .
+    owl:versionInfo "0.0.2" .
 
 mmut:Environment a owl:Class ;
     rdfs:label "An environment for executing containers."@en .

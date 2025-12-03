@@ -6,7 +6,7 @@ A Python library providing RDF ontology definitions for MMUT (MicroModel and Tra
 
 Visualized the ontology with [WebVOWL](https://service.tib.eu/webvowl/)
 
-![SysML Ontology](./mmut-0.0.1.ttl.svg)
+![SysML Ontology](./mmut.ttl.svg)
 
 
 ## Installation

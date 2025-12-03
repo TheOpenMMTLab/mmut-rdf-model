@@ -1,7 +1,7 @@
 from rdflib import Graph, Namespace, RDF, RDFS, OWL, URIRef, DCTERMS, Literal, XSD
 
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 KEY = "mmut"
 
 # Definition des NameNSraums
@@ -33,12 +33,16 @@ g.add((NS.RDFMicroModel, RDFS.label, Literal("An RDF micro model.", lang='en')))
 g.add((NS.RDFMicroModel, RDFS.subClassOf, NS.MicroModel))
 
 g.add((NS.BinaryMicroModel, RDF.type, OWL.Class))
-g.add((NS.BinaryMicroModel, RDFS.label, Literal("An Binary micro model.", lang='en')))
+g.add((NS.BinaryMicroModel, RDFS.label, Literal("A Binary micro model.", lang='en')))
 g.add((NS.BinaryMicroModel, RDFS.subClassOf, NS.MicroModel))
 
 g.add((NS.SysMLMicroModel, RDF.type, OWL.Class))
-g.add((NS.SysMLMicroModel, RDFS.label, Literal("An SysML micro model.", lang='en')))
+g.add((NS.SysMLMicroModel, RDFS.label, Literal("A SysML micro model.", lang='en')))
 g.add((NS.SysMLMicroModel, RDFS.subClassOf, NS.MicroModel))
+
+g.add((NS.EcoreMicroModel, RDF.type, OWL.Class))
+g.add((NS.EcoreMicroModel, RDFS.label, Literal("An Ecore micro model.", lang='en')))
+g.add((NS.EcoreMicroModel, RDFS.subClassOf, NS.MicroModel))
 
 # Transformation Taxonomy
 g.add((NS.Transformation, RDF.type, OWL.Class))
