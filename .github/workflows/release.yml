@@ -3,6 +3,7 @@ name: Build, Lint, Test & Deploy
 on:
   push:
     branches: [main]
+    tags: [v*]
   release:
     types: [published]
 
@@ -12,6 +13,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -19,7 +22,7 @@ jobs:
           python-version: "3.9"
 
       - name: Install poetry
-        run: pip install poetry
+        run: pip install poetry poetry-dynamic-versioning[plugin]
 
       - name: Install dependencies
         run: poetry install
@@ -34,11 +37,13 @@ jobs:
 
   deploy:
     needs: build-test-lint
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v'))
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -46,13 +51,16 @@ jobs:
           python-version: "3.9"
 
       - name: Install poetry
-        run: pip install poetry
+        run: pip install poetry poetry-dynamic-versioning[plugin]
 
       - name: Install dependencies
         run: poetry install
 
       - name: Build package
         run: poetry build
+
+      - name: Show built package version
+        run: ls -1 dist/
 
       - name: Publish to PyPI
         env:

@@ -1,0 +1,126 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix MMUT: <http://frittenburger.de/ontology/mmut#> .
+
+MMUT:TransformationShape
+	a sh:NodeShape ;
+	sh:targetClass MMUT:Transformation ;
+	# Data often uses concrete classes (e.g. MMUT:PythonScriptTransformation)
+	# without explicitly typing MMUT:Transformation.
+	sh:targetSubjectsOf MMUT:hasOutputModel ;
+
+	# A transformation must have at least one input model.
+	sh:property [
+		sh:path [ sh:inversePath MMUT:isInputModelOf ] ;
+		sh:minCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:message "A transformation requires at least one input model." ;
+	] ;
+
+	# A transformation must have at least one output model.
+	# No sh:maxCount on purpose: multiple outputs are allowed.
+	sh:property [
+		sh:path MMUT:hasOutputModel ;
+		sh:minCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:message "A transformation requires at least one output model." ;
+	] ;
+
+	# Expected by orchestrator logic: exactly one task definition per process step.
+	sh:property [
+		sh:path MMUT:hasTaskDefinition ;
+		sh:minCount 1 ;
+		sh:maxCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:message "A transformation must have exactly one task definition." ;
+	] ;
+
+	# Loops are not allowed in the transformation graph.
+	# Path meaning:
+	#   transformation --hasOutputModel--> model --isInputModelOf--> transformation
+	# If this is reachable in one or more steps back to itself, there is a cycle.
+	sh:sparql [
+		sh:message "Loop detected: transformation graph must be acyclic." ;
+		sh:select """
+			SELECT $this
+			WHERE {
+				$this (<http://frittenburger.de/ontology/mmut#hasOutputModel>/<http://frittenburger.de/ontology/mmut#isInputModelOf>)+ $this .
+			}
+		""" ;
+	] .
+
+
+# ============================================================================
+# MICROMODEL CONSTRAINTS
+# ============================================================================
+
+MMUT:MicroModelShape
+	a sh:NodeShape ;
+	sh:targetClass MMUT:MicroModel ;
+	sh:targetSubjectsOf MMUT:isInputModelOf ;
+	sh:targetSubjectsOf MMUT:hasOutputModel ;
+
+	# All models must have a label
+	sh:property [
+		sh:path rdfs:label ;
+		sh:minCount 1 ;
+		sh:datatype xsd:string ;
+		sh:message "A micromodel must have at least one label (rdfs:label)." ;
+	] .
+
+
+# ============================================================================
+# TASK DEFINITION CONSTRAINTS
+# ============================================================================
+
+MMUT:TaskDefinitionShape
+	a sh:NodeShape ;
+	sh:targetClass MMUT:TaskDefinition ;
+
+	# 1. TaskDefinition must have a label
+	sh:property [
+		sh:path rdfs:label ;
+		sh:minCount 1 ;
+		sh:datatype xsd:string ;
+		sh:message "A TaskDefinition must have at least one label (rdfs:label)." ;
+	] ;
+
+	# 2. Must have container properties
+	sh:property [
+		sh:path MMUT:hasContainerProperties ;
+		sh:minCount 1 ;
+		sh:nodeKind sh:IRI ;
+		sh:message "A TaskDefinition must have container properties (MMUT:hasContainerProperties)." ;
+	] .
+
+
+# ============================================================================
+# CONTAINER PROPERTIES CONSTRAINTS
+# ============================================================================
+
+MMUT:ContainerPropertiesShape
+	a sh:NodeShape ;
+	sh:targetClass MMUT:ContainerProperties ;
+
+	# 1. ContainerProperties must have an image
+	sh:property [
+		sh:path MMUT:image ;
+		sh:minCount 1 ;
+		sh:datatype xsd:string ;
+		sh:message "ContainerProperties must have an image (MMUT:image) defined." ;
+	] ;
+
+	# 2. Image must not be empty string
+	sh:property [
+		sh:path MMUT:image ;
+		sh:minLength 1 ;
+		sh:message "ContainerProperties image must not be empty." ;
+	] ;
+
+	# 3. Must have at least one command (sequence can contain literals or IRIs)
+	sh:property [
+		sh:path MMUT:hasCommandSequence ;
+		sh:minCount 1 ;
+		sh:message "ContainerProperties must have at least one command in the command sequence (MMUT:hasCommandSequence)." ;
+	] .

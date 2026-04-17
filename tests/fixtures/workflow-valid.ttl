@@ -1,0 +1,29 @@
+@prefix ex: <http://example.org#> .
+@prefix mmut: <http://frittenburger.de/ontology/mmut#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ex:model_in
+    rdf:type mmut:RDFMicroModel ;
+    rdfs:label "Input Model" ;
+    mmut:isInputModelOf ex:transform .
+
+ex:model_out
+    rdf:type mmut:RDFMicroModel ;
+    rdfs:label "Output Model" .
+
+ex:transform
+    rdf:type mmut:PythonScriptTransformation ;
+    rdfs:label "Transform Step" ;
+    mmut:hasOutputModel ex:model_out ;
+    mmut:hasTaskDefinition ex:taskdef .
+
+ex:taskdef
+    rdf:type mmut:TaskDefinition ;
+    rdfs:label "Transform Task" ;
+    mmut:hasContainerProperties ex:container .
+
+ex:container
+    rdf:type mmut:ContainerProperties ;
+    mmut:image "python:3.11" ;
+    mmut:hasCommandSequence "python run.py" .

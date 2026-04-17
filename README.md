@@ -26,6 +26,52 @@ g.bind("mmut", MMUT._NS)
 g.add((URIRef("http://example.org#model_x"), RDF.type, MMUT.RDFMicroModel))
 ```
 
+### SHACL Validation in Python
+
+```python
+from importlib.resources import files
+from pyshacl import validate
+from rdflib import Graph
+
+data_graph = Graph()
+# data_graph.parse("path/to/your-model.ttl", format="turtle")
+
+shapes_path = files("py_mmut_rdf").joinpath("mmut-shapes.ttl")
+conforms, report_graph, report_text = validate(
+	data_graph=data_graph,
+	shacl_graph=str(shapes_path),
+)
+
+print(conforms)
+print(report_text)
+```
+
+## SHACL Validation
+
+The library includes SHACL shapes in [py_mmut_rdf/mmut-shapes.ttl](py_mmut_rdf/mmut-shapes.ttl).
+
+Install pySHACL if needed:
+
+```bash
+pip install pyshacl
+```
+
+### 1. Loop Example (should fail)
+
+```bash
+pyshacl -s py_mmut_rdf/mmut-shapes.ttl path/to/test-loop.ttl -f human
+```
+
+Expected result: `Conforms: False`
+
+### 2. Real MMUT Example
+
+```bash
+pyshacl -s py_mmut_rdf/mmut-shapes.ttl path/to/mmut-squirrl.ttl -f human
+```
+
+Tip: add `-d` for verbose diagnostics.
+
 ## Development
 
 
@@ -55,6 +101,19 @@ poetry build
 ```bash
 poetry publish --username __token__ --password <TOKEN>
 ```
+
+### Versioning via Git Tags
+
+The package version is derived automatically from Git tags during build/release.
+
+Use semantic version tags, e.g.:
+
+```bash
+git tag v0.0.3
+git push origin v0.0.3
+```
+
+In GitHub Actions, the workflow fetches tags and builds the package with the tag-derived version.
 
 ## Contributing
 
